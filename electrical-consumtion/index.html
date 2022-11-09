@@ -19,20 +19,24 @@
       margin: 0;
       padding: 1rem;
     }
+    input {
+      margin: 0.5rem 0 0.5rem 0;
+    }
     #result {
-      font-size: 3rem;
+      font-size: 2rem;
     }
   </style>
 </head>
 <body>
   <div><input type="number" id="watts" oninput="setWatts(this.value)"> <span>W</span></div>
-  <div><input type="number" id="hours" oninput="setHours(this.value)" value="1"> <span>hours</span></div>
+  <div><input type="text" id="multipliers" oninput="setMultipliers(this.value)"> <span>(multipliers separated by spaces)</span></div>
   <div id="result"></div>
 
   <script>
     let watts = 0;
-    let hours = 1;
+    let multipliers = [];
 
+    const multipliersInput = document.getElementById('multipliers');
     const result = document.getElementById('result');
     const price = 0.257359;
     let eurFormat = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' });
@@ -42,15 +46,30 @@
       calculate();
     }
 
-    function setHours(value) {
-      hours = value || 1;
+    function setMultipliers(value) {
+      if (/^(((?:[0-9]+\.)?[0-9])|\s)*$/.test(value)) {
+        multipliers = value.trim().split(/\s+/).map(value => parseFloat(value));
+        multipliersInput.style.backgroundColor = 'initial';
+      } else {
+        multipliers = [];
+        multipliersInput.style.backgroundColor = 'red';
+      }
       calculate();
     }
 
     function calculate(value) {
       const kwatts = watts / 1000;
-      const amount = kwatts * price * hours;
-      result.innerHTML = `${eurFormat.format(amount)}/${hours.toString()} h`;
+      const amount = kwatts * price;
+      let amountMultiplier = amount;
+      let lastAmountMultiplier = amountMultiplier;
+      result.innerHTML = `
+        <div>${eurFormat.format(amount)}/h</div>
+        ${multipliers.map(multiplier => {
+          lastAmountMultiplier = amountMultiplier;
+          amountMultiplier = lastAmountMultiplier * multiplier;
+          return `<div>${multiplier.toString()} x ${eurFormat.format(lastAmountMultiplier)} = ${eurFormat.format(amountMultiplier)}</div>`;
+        }).join('')}
+      `;
     }
 
   </script>
