@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electrical consumtion</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100vw;
+      height: 100vh;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 1rem;
+    }
+    #result {
+      font-size: 3rem;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <input type="number" id="watts" oninput="calculate(this.value)"> <span>W</span>
+  </div>
+  <div id="result"></div>
+
+  <script>
+    const result = document.getElementById('result');
+    const price = 0.257359;
+
+    function calculate(value) {
+      const watts = value || 0;
+      const kwatts = watts / 1000;
+      const amount = kwatts * price;
+      result.innerHTML = `${amount.toFixed(3)} €/hour`;
+    }
+
+  </script>
+</body>
+</html>
