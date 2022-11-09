@@ -16,7 +16,6 @@
     body {
       display: flex;
       flex-direction: column;
-      align-items: center;
       margin: 0;
       padding: 1rem;
     }
@@ -26,20 +25,32 @@
   </style>
 </head>
 <body>
-  <div>
-    <input type="number" id="watts" oninput="calculate(this.value)"> <span>W</span>
-  </div>
+  <div><input type="number" id="watts" oninput="setWatts(this.value)"> <span>W</span></div>
+  <div><input type="number" id="hours" oninput="setHours(this.value)" value="1"> <span>hours</span></div>
   <div id="result"></div>
 
   <script>
+    let watts = 0;
+    let hours = 1;
+
     const result = document.getElementById('result');
     const price = 0.257359;
+    let eurFormat = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' });
+
+    function setWatts(value) {
+      watts = value || 0;
+      calculate();
+    }
+
+    function setHours(value) {
+      hours = value || 1;
+      calculate();
+    }
 
     function calculate(value) {
-      const watts = value || 0;
       const kwatts = watts / 1000;
-      const amount = kwatts * price;
-      result.innerHTML = `${amount.toFixed(3)} €/hour`;
+      const amount = kwatts * price * hours;
+      result.innerHTML = `${eurFormat.format(amount)}/${hours.toString()} h`;
     }
 
   </script>
